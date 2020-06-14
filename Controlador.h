@@ -7,6 +7,7 @@ class Controlador{
         Controlador();
         ~Controlador();
         int validar_entrada();
+        bool validar_existencia();
     private:
         
 };

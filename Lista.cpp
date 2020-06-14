@@ -2,16 +2,23 @@
 
 using namespace std;
 
-Lista::Lista(bool es_atomico, int valor, string nombre){
-    atomico = es_atomico; //si es atomico, su valor se muestra, si no, quiere decir que es una lista
+Lista::Lista(int valor, string nombre){ //constructor de listas atómicas: poseen un valor
+    atomico = true; //si es atomico, su valor se muestra, si no, quiere decir que es una lista
     this->valor = valor;
     this->nombre = nombre;
     cabeza = nullptr;
     cola = nullptr;
 }
 
+Lista::Lista(Lista* lista1, Lista* lista2, string nombre){ //constructor de listas no atómicas
+    atomico = false;
+    valor = 0;
+    this->nombre = nombre;
+    cabeza = lista1;
+    cola = lista2;
+}
+
 Lista::~Lista(){
-    //cout << "destructor" << endl;
     if(atomico == true){
         if(cabeza){
             delete cabeza;
@@ -32,15 +39,13 @@ Lista* Lista::add(char posicion, Lista *lista1, Lista *lista2){
     string nombre;
     cout << "Ingrese el nombre de su nueva lista: ";
     cin >> nombre;
-    Lista *nueva = new Lista(false,0,nombre);
+    Lista *nueva;
 
     if(posicion == 'h'){
-        nueva->cabeza = lista1;
-        nueva->cola = lista2;
+        nueva = new Lista(lista1,lista2,nombre);
     }
     else if(posicion == 't'){
-        nueva->cabeza = lista2;
-        nueva->cola = lista1;
+        nueva = new Lista(lista2,lista1,nombre);
     }
     return nueva;
 }
@@ -60,4 +65,64 @@ void Lista::mostrar_lista(){
     else{
         cout << valor;
     }
+}
+
+Lista* Lista::get_head(){
+    return cabeza;
+}
+
+Lista* Lista::get_tail(){
+    return cola;
+}
+
+Lista* Lista::obtener_fragmento(string secuencia,Lista *lista){ //editar
+
+    int ultima_pos = secuencia.length()-1;
+    Lista *fragmento = lista;
+    
+    if(ultima_pos >= 0){
+        if((secuencia[ultima_pos] == 'h') && (lista->cabeza != nullptr)){
+            secuencia.pop_back();
+            lista->cabeza->mostrar_lista();
+            cout << " cabeza encontrada" << endl;
+            fragmento = obtener_fragmento(secuencia,lista->cabeza);
+        }
+        else if((secuencia[ultima_pos] == 't') && (lista->cola != nullptr)){
+            secuencia.pop_back();
+            lista->cola->mostrar_lista();
+            cout << " cola encontrada" << endl;
+            fragmento = obtener_fragmento(secuencia,lista->cola);
+        }
+        else{
+            secuencia.pop_back();
+            fragmento = obtener_fragmento(secuencia,lista);
+        }
+    }
+    cout << endl;
+    fragmento->mostrar_lista();
+    return fragmento;
+}
+
+bool Lista::buscar_valor(int valor, bool encontrado){ //editar
+    
+    if(atomico == false && !encontrado){
+        if(cabeza != nullptr){
+            encontrado = cabeza->buscar_valor(valor,false);
+        }
+        if(cola != nullptr){
+            encontrado = cola->buscar_valor(valor,false);
+        }
+    }
+    else{
+        cout << "He llegado a un valor atómico" << endl;
+        if(this->valor != valor){
+            cout << "No hay coincidencias" << endl;
+        }
+        else{
+            cout << "Los valores coinciden" <<endl;
+            encontrado = true;
+        }
+    }
+    cout << encontrado << endl;
+    return encontrado;
 }

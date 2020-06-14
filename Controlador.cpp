@@ -12,16 +12,20 @@ Controlador::~Controlador(){
 
 int Controlador::validar_entrada(){ //actualmente solo funciona contra strings
     int valor = 0;
-    bool error;
+    bool error = true;
     do{
-        cout << "Valor a asignar: ";
-        error = false;
-        if(!(cin>>valor)){
-            error = true;
-            cout << "Tipo de dato diferente a int no aceptado" << endl;
-            cin.clear();
+        switch (scanf("%d", &valor)) {
+            case EOF: printf("Ha ocurrido un error interno.\n"); 
             cin.ignore();
-        }
-    }while(error);
+            cin.clear();break;
+            case 0: 
+                cin.ignore();
+                cin.clear(); break;
+            default:
+                cin.ignore();
+                cin.clear();
+                error = false; break;
+        } 
+    }while(error == true);
     return valor;
 }
