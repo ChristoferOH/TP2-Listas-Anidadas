@@ -6,6 +6,7 @@ class Lista{
     public:
         Lista(int,std::string);
         Lista(Lista*,Lista*,std::string);
+        Lista(Lista*);
         ~Lista();
         std::string nombre;
         Lista* add(char,Lista*,Lista*);

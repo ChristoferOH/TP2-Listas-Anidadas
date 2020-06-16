@@ -1,3 +1,10 @@
+/**
+ * @file Controlador.cpp
+ * @brief Clase Controlador que se encarga de validar entradas de datos
+ * @author Christofer Obregón
+ * @date 16 de junio,2020
+ */
+
 #include "Controlador.h"
 
 using namespace std;
