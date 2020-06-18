@@ -17,20 +17,24 @@ int main(){
     
     
     if(opcion == 1){
-        Interfaz<int> *interfaz = new Interfaz<int>();
-        interfaz->ejecutar();
+        Interfaz<int> *interfaz_int = new Interfaz<int>();
+        interfaz_int->ejecutar();
+        delete interfaz_int;
     }
     else if(opcion == 2){
-        Interfaz<double> *interfaz = new Interfaz<double>();
-        interfaz->ejecutar();
+        Interfaz<double> *interfaz_double = new Interfaz<double>();
+        interfaz_double->ejecutar();
+        delete interfaz_double;
     }
     else if(opcion == 3){
-        Interfaz<string> *interfaz = new Interfaz<string>();
-        interfaz->ejecutar();
+        Interfaz<string> *interfaz_string = new Interfaz<string>();
+        interfaz_string->ejecutar();
+        delete interfaz_string;
     }
     else if(opcion == 4){
-        Interfaz<char> *interfaz = new Interfaz<char>();
-        interfaz->ejecutar();
+        Interfaz<char> *interfaz_char = new Interfaz<char>();
+        interfaz_char->ejecutar();
+        delete interfaz_char;
     }
     return 0;
 }
