@@ -55,7 +55,6 @@ Lista<T>::Lista(T valor, string nombre){
 template <typename T>
 Lista<T>::Lista(Lista<T>* lista1, Lista<T>* lista2, string nombre){
     atomico = false;
-    //valor = ; //por defecto se le asigna un 0, sin embargo, no se toma en cuenta
     this->nombre = nombre;
     cabeza = lista1;
     cola = lista2;
