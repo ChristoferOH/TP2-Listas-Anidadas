@@ -12,7 +12,15 @@ int main(){
         cout << "3. Lista string" << endl;
         cout << "4. Lista char" << endl;
         cout << "Opción: ";
-        cin >> opcion;
+        bool error;
+        do{
+            error = false;
+            if(!(cin >> opcion)){
+                error = true;
+                cin.clear();
+                cin.ignore(256,'\n');
+            }
+        }while(error);
     }while(opcion < 1 || opcion > 4);
     
     

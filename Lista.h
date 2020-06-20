@@ -97,7 +97,7 @@ template <typename T>
 Lista<T>* Lista<T>::add(char posicion, Lista *lista1, Lista *lista2){
     string nombre;
     cout << "Ingrese el nombre de su nueva lista: ";
-    cin >> nombre;
+    getline(cin,nombre);
     Lista<T> *nueva;
 
     if(posicion == 'h'){

@@ -21,17 +21,16 @@ class Interfaz{
     private:
         string nombre; //guarda el nombre de una lista a operar
         T valor;
-        int tipo;
         typename std::map<string,Lista<T>* > listas; 
         typename std::map<string,Lista<T>* >::iterator it;
         Lista<T> *referencia;
         T validar_entrada();
+        int validar_opcion();
         void mostrar_menu();
         void liberar_memoria();
         void crear_lista_atomica();
         bool buscar_lista(string);
-        void operar_listas(string,string,char);
-        
+        void operar_listas(string,string,char);        
 };
 
 template <typename T>
@@ -49,7 +48,7 @@ Interfaz<T>::~Interfaz(){
  */
 template <typename T>
 void Interfaz<T>::ejecutar(){
-    int opcion = 0;
+    int opcion;
     
     string secuencia; //secuencia de caracteres a seguir para llamados recursivos de colas y cabezas
     string lista1; //identificador
@@ -58,7 +57,7 @@ void Interfaz<T>::ejecutar(){
     do{
         mostrar_menu();
         cout << "Opcion: ";
-        cin >> opcion;
+        opcion = validar_opcion();
 
         switch(opcion){
             case 1:
@@ -67,16 +66,16 @@ void Interfaz<T>::ejecutar(){
                 break;
             case 2:
                 cout << "A qué lista(nombre) le desea agregar una nueva cabeza?" << endl;
-                cin >> lista2;
+                getline(cin,lista2);
                 cout << "Cuál lista(nombre) le desea agregar como cabeza?" << endl;
-                cin >> lista1;
+                getline(cin,lista1);
                 operar_listas(lista1,lista2,'h');           
                 break;
             case 3:
                 cout << "A qué lista(nombre) le desea agregar una nueva cola?" << endl;
-                cin >> lista2;
+                getline(cin,lista2);
                 cout << "Cuál lista(nombre) le desea agregar como cola?" << endl;
-                cin >> lista1;
+                getline(cin,lista1);
                 operar_listas(lista1,lista2,'t');
                 break;
             case 4:
@@ -85,10 +84,10 @@ void Interfaz<T>::ejecutar(){
                 cout << "Ejemplo: hthh -> la cabeza de la cola, de la cabeza de la cabeza" << endl;
                 cout << "Siendo el último caracter lo primero que se consulta, y el primero a lo que se quiere llegar" << endl;
                 cout << "\nIngrese el nombre de la lista: ";
-                cin >> nombre;
+                getline(cin,nombre);
                 if(buscar_lista(nombre)){
                     cout << "Ingrese la secuencia que desea buscar: ";
-                    cin >> secuencia;
+                    getline(cin,secuencia);
                     referencia = referencia->obtener_fragmento(secuencia,listas[nombre]);
                     cout << "Fragmento: ";
                     referencia->mostrar_lista();
@@ -97,7 +96,8 @@ void Interfaz<T>::ejecutar(){
                     cin >> respuesta;
                     if(respuesta == 's'){
                         cout << "Nombre de su nueva lista: ";
-                        cin >> nombre;
+                        cin.ignore();
+                        getline(cin,nombre);
                         referencia = new Lista<T>(referencia);
                         referencia->mostrar_lista();
                         listas[nombre] = referencia;
@@ -117,14 +117,14 @@ void Interfaz<T>::ejecutar(){
                 break;
             case 6:
                 cout << "Ingrese el nombre de la lista a eliminar: ";
-                cin >> nombre;
+                getline(cin,nombre);
                 listas.erase(nombre);
                 break;
             case 7:
                 cout << "Ingrese el nombre de la lista a consultar: ";
-                cin >> nombre;
+                getline(cin,nombre);
                 cout << "Ingrese el valor que desea buscar: ";
-                cin >> valor;
+                valor = validar_entrada();
                 if(buscar_lista(nombre)){
                     if(listas[nombre]->buscar_valor(valor,false)){
                         cout << endl;
@@ -146,7 +146,7 @@ void Interfaz<T>::ejecutar(){
 };
 
 /**
- * @brief muestra en pantalla el menú
+ * @brief Muestra en pantalla el menú
  */
 template <typename T>
 void Interfaz<T>::mostrar_menu(){
@@ -161,7 +161,7 @@ void Interfaz<T>::mostrar_menu(){
 };
 
 /**
- * @brief libera la memoria utilizada para la creación de las listas, se usa al final de la ejecución
+ * @brief Libera la memoria utilizada para la creación de las listas, se usa al final de la ejecución
  */
 template <typename T>
 void Interfaz<T>::liberar_memoria(){
@@ -171,9 +171,9 @@ void Interfaz<T>::liberar_memoria(){
 };
 
 /**
- * @brief busca una lista por su nombre
+ * @brief Busca una lista por su nombre
  * @param nombre nombre de la lista a buscar
- * @returns un valor booleano si encontró o no la lista
+ * @returns Un valor booleano si encontró o no la lista
  */
 template <typename T>
 bool Interfaz<T>::buscar_lista(string nombre){
@@ -186,7 +186,7 @@ bool Interfaz<T>::buscar_lista(string nombre){
 };
 
 /**
- * @brief opera listas, ya sea para agregar cabezas o colas
+ * @brief Opera listas, ya sea para agregar cabezas o colas
  * @param lista1 lista que será agregada en la posición deseada
  * @param lista2 lista a la que se le agregará lista1
  * @param pos posición deseada, h para cabeza, t para cola
@@ -202,28 +202,56 @@ void Interfaz<T>::operar_listas(string lista1, string lista2, char pos){
     }     
 };
 
+/**
+ * @brief Crea una lista atómica y la almacena en un mapa para su manipulación
+ */
 template <typename T>
 void Interfaz<T>::crear_lista_atomica(){
     cout << "Nombre de la nueva lista atómica: ";
-    cin >> nombre;
+    getline(cin,nombre);
     cout << "Valor a asignar: ";
     valor = validar_entrada();
     referencia = new Lista<T>(valor,nombre);
     listas[nombre] = referencia;
 };
 
+/**
+ * @brief Valida si el tipo de dato ingresado por teclado es correspondiente a su formato
+ * @returns El valor con su debido formato
+ */
 template <typename T>
-T Interfaz<T>::validar_entrada(){ //actualmente solo funciona contra strings
+T Interfaz<T>::validar_entrada(){
     
     T valor;
-
-    while((cin >> valor).fail()){
-        cin.clear();
-        cin.ignore();
-        fflush(stdin);
-        cout << "Entrada inválida" << endl;
-        cout << "Ingrese un valor correspondiente: ";
-    }
-
+    bool error;
+    do{
+        error = false;
+        if(!(cin >> valor)){
+            error = true;
+            cin.clear();
+            cin.ignore(256,'\n');
+        }
+    }while(error);
+    cin.ignore(256,'\n');
     return valor;
+}
+
+/**
+ * @brief Valida si una entrada en el menú de opciones es de tipo int
+ * @returns La opción válida con formato int
+ */
+template <typename T>
+int Interfaz<T>::validar_opcion(){
+    int opcion;
+    bool error;
+    do{
+        error = false;
+        if(!(cin >> opcion)){
+            error = true;
+            cin.clear();
+            cin.ignore(256,'\n');
+        }
+    }while(error);
+    cin.ignore(256,'\n');
+    return opcion;
 }
